@@ -9,7 +9,8 @@ var slice = Array.prototype.slice;
  * Expose `co`.
  */
 
-module.exports = co['default'] = co.co = co;
+// module.exports = co['default'] = co.co = co;
+module.exports = require('./myCo.js');
 
 /**
  * Wrap the given generator `fn` into a
@@ -48,7 +49,9 @@ function co(gen) {
   // which leads to memory leak errors.
   // see https://github.com/tj/co/issues/180
   return new Promise(function(resolve, reject) {
+    // 1. 是函数就调用
     if (typeof gen === 'function') gen = gen.apply(ctx, args);
+    // 2. 不是个Generator或者说迭代器的话，就直接resolve函数调用值
     if (!gen || typeof gen.next !== 'function') return resolve(gen);
 
     onFulfilled();
