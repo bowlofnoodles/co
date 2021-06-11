@@ -65,9 +65,11 @@ function myCo(gen) {
         // gen.throw 抛异常 让GeneratorFunction中可以捕获yield+关键字的异常 而不是整个promise reject
         ret = gen.throw(err);
       } catch (err) {
+        // !!! 1. 外部没有对gen.throw的错误 catch的话 就会进到这里 然后reject整个promise
         reject(err);
       }
-      // 抛异常reject之后，GeneratorFunction的逻辑能够接着走下去，这里跟async await不同，async await抛了异常，整个promise就直接reject了
+      // !!! 2. 正确：外部如果gen.throw的错误 catch的话，那就会走到这里，GeneratorFunction后面的逻辑就走的下去了，跟async函数是！！！一样的！！！。
+      // !!! 这里错误 => 抛异常reject之后，GeneratorFunction的逻辑能够接着走下去，这里跟async await不同，async await抛了异常，整个promise就直接reject了
       next(ret);
     }
 
